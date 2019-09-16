@@ -1,10 +1,10 @@
-FROM cargo.caicloudprivatetest.com/library/filebeat:6.5.4
+FROM docker.elastic.co/beats/filebeat:6.7.2
 
 USER root
 RUN yum install -y gettext && yum clean all
 RUN mkdir /etc/filebeat
-COPY build/filebeat/k8s-log-template.json /etc/filebeat/k8s-log-template.json
-COPY build/filebeat/filebeat.yml.tpl /etc/filebeat/filebeat.yml.tpl
+COPY build/filebeat-keeper/k8s-log-template.json /etc/filebeat/k8s-log-template.json
+COPY build/filebeat-keeper/filebeat.yml.tpl /etc/filebeat/filebeat.yml.tpl
 COPY bin/filebeat-keeper /opt/filebeat-keeper/filebeat-keeper
 
 WORKDIR /usr/share/filebeat
