@@ -16,9 +16,9 @@ func TestParseLogEnv(t *testing.T) {
 			"",
 		},
 		{
-			"sn_log_foo_bar_filter",
+			"sn_log_foo_bar_include_lines",
 			"foo_bar",
-			"filter",
+			"include_lines",
 		},
 		{
 			"aaaa",

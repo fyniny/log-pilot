@@ -8,7 +8,7 @@ _obj
 _test
 .idea
 logs
-hack
+
 # Architecture specific extensions/prefixes
 *.[568vq]
 [568vq].out
@@ -26,3 +26,6 @@ _testmain.go
 *.prof
 bin/
 docker-images/pilot
+
+# make test output
+coverage.out

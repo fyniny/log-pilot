@@ -36,6 +36,7 @@ type LogConfig struct {
 	Tags   map[string]string
 	InOpts map[string]string
 	Stdout bool
+	OutOpts map[string]string
 }
 
 type LogFormat string
