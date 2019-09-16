@@ -1,4 +1,4 @@
-FROM cargo.caicloud.xyz/library/golang:1.12.9-stretch
+FROM cargo.caicloud.xyz/library/debian:stretch-curl
 
 COPY bin/log-pilot /opt/log-pilot/bin/log-pilot
 COPY assets/filebeat/filebeat.tpl /opt/log-pilot
