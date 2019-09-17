@@ -1,4 +1,4 @@
-FROM docker.elastic.co/beats/filebeat:6.7.2
+FROM cargo.dev.caicloud.xyz/release/filebeat:6.5.3
 
 USER root
 RUN yum install -y gettext && yum clean all
