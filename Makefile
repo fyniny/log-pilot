@@ -29,7 +29,7 @@
 ROOT := github.com/caicloud/log-pilot
 
 # Target binaries. You can build multiple binaries for a single project.
-TARGETS ?= log-pilot filebeat-keeper
+TARGETS ?= log-pilot filebeat
 
 # Container image prefix and suffix added to targets.
 # The final built images are:
@@ -95,10 +95,10 @@ test:
 	@go tool cover -func coverage.out | tail -n 1 | awk '{ print "Total coverage: " $$3 }'
 
 build-local:
-	@for target in $(TARGETS); do                                                      \
-	  go build -i -v -o $(OUTPUT_DIR)/$${target} -p $(CPUS)                            \
-	  $(CMD_DIR)/$${target};                                                           \
-	done
+	@go build -i -v -o $(OUTPUT_DIR)/log-pilot -p $(CPUS)                               \
+	   $(CMD_DIR)/log-pilot
+	@go build -i -v -o $(OUTPUT_DIR)/filebeat -p $(CPUS)                                \
+	   $(CMD_DIR)/filebeat
 
 build-linux:
 	@docker run --rm                                                                   \
@@ -108,14 +108,16 @@ build-linux:
 	  -e GOARCH=amd64                                                                  \
 	  -e GOPATH=/go                                                                    \
 	  $(BASE_REGISTRY)/golang:1.12.9-stretch                                           \
-	    /bin/bash -c 'for target in $(TARGETS); do                                     \
-	      go build -i -v -o $(OUTPUT_DIR)/$${target} -p $(CPUS)                        \
-	        $(CMD_DIR)/$${target};                                                     \
-	    done'
+	    /bin/bash -c                                                                   \
+	      'go build -i -v -o $(OUTPUT_DIR)/log-pilot -p $(CPUS)                         \
+	        $(CMD_DIR)/log-pilot &&                                                    \
+	       go build -i -v -o $(OUTPUT_DIR)/filebeat -p $(CPUS)                          \
+	        $(CMD_DIR)/filebeat                                                          \
+	      '
 
 container: build-linux
 	docker build -t $(REGISTRY)/log-pilot:$(VERSION) -f $(BUILD_DIR)/log-pilot/Dockerfile .
-	docker build -t $(REGISTRY)/filebeat:$(VERSION) -f $(BUILD_DIR)/filebeat-keeper/Dockerfile .
+	docker build -t $(REGISTRY)/filebeat:$(VERSION) -f $(BUILD_DIR)/filebeat/Dockerfile .
 
 push: container
 	docker push $(REGISTRY)/log-pilot:$(VERSION)
