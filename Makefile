@@ -116,12 +116,12 @@ build-linux:
 	      '
 
 container: build-linux
-	docker build -t $(REGISTRY)/log-pilot:$(VERSION) -f $(BUILD_DIR)/log-pilot/Dockerfile .
-	docker build -t $(REGISTRY)/filebeat:$(VERSION) -f $(BUILD_DIR)/filebeat/Dockerfile .
+	@docker build -t $(REGISTRY)/log-pilot:$(VERSION) -f $(BUILD_DIR)/log-pilot/Dockerfile .
+	@docker build -t $(REGISTRY)/filebeat:$(VERSION) -f $(BUILD_DIR)/filebeat/Dockerfile .
 
 push: container
-	docker push $(REGISTRY)/log-pilot:$(VERSION)
-	docker push $(REGISTRY)/filebeat:$(VERSION)
+	@docker push $(REGISTRY)/log-pilot:$(VERSION)
+	@docker push $(REGISTRY)/filebeat:$(VERSION)
 
 .PHONY: clean
 clean:
