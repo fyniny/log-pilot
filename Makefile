@@ -29,7 +29,7 @@
 ROOT := github.com/caicloud/log-pilot
 
 # Target binaries. You can build multiple binaries for a single project.
-TARGETS ?= log-pilot filebeat
+TARGETS ?= log-pilot filebeat-keeper
 
 # Container image prefix and suffix added to targets.
 # The final built images are:
