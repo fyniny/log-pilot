@@ -19,7 +19,6 @@ import (
 	"github.com/caicloud/log-pilot/pilot/log"
 
 	"github.com/elastic/beats/libbeat/logp"
-	"github.com/elastic/go-ucfg"
 )
 
 // logStates contains states in filebeat registry and related to the container
@@ -61,7 +60,7 @@ func New(baseDir, configTemplateFile, filebeatHome string) (configurer.Configure
 		base:           baseDir,
 		tmpl:           t,
 		closeCh:        make(chan bool),
-		watchContainer: make(map[string]*logStates, 0),
+		watchContainer: make(map[string]*logStates),
 		watchDuration:  60 * time.Second,
 	}
 
@@ -81,11 +80,11 @@ func (c *filebeatConfigurer) Start() error {
 	return nil
 }
 
-var configOpts = []ucfg.Option{
-	ucfg.PathSep("."),
-	ucfg.ResolveEnv,
-	ucfg.VarExp,
-}
+//var configOpts = []ucfg.Option{
+//	ucfg.PathSep("."),
+//	ucfg.ResolveEnv,
+//	ucfg.VarExp,
+//}
 
 // FileInode is copied from beats/filebeat/registar/registar.go
 type FileInode struct {
@@ -263,10 +262,7 @@ func (c *filebeatConfigurer) canRemoveConf(container string, registry map[string
 		lst.states = states
 		lst.ts = time.Now()
 
-		if len(states) == 0 {
-			return true
-		}
-		return false
+		return len(states) == 0
 	}
 
 	c.logger.Debugf("check %s.yml, old states: %#v, new states: %#v", container, lst.states, states)
@@ -289,7 +285,7 @@ func (c *filebeatConfigurer) canRemoveConf(container string, registry map[string
 		}
 	}
 
-	if changed == true {
+	if changed {
 		// Update states, keep it and wait for next check
 		lst.states = states
 		lst.ts = time.Now()
@@ -344,7 +340,7 @@ func (c *filebeatConfigurer) getRegsitryState() (map[string]RegistryState, error
 		return nil, err
 	}
 
-	statesMap := make(map[string]RegistryState, 0)
+	statesMap := make(map[string]RegistryState)
 	for _, state := range states {
 		if _, ok := statesMap[state.Source]; !ok {
 			statesMap[state.Source] = state

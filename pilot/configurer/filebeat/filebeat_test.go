@@ -9,23 +9,23 @@ import (
 	"github.com/caicloud/log-pilot/pilot/configurer"
 )
 
-var (
-	expectRenderResult = `
-- type: log
-  enabled: true
-  paths:
-      - /opt/tomcat/access.log
-  scan_frequency: 10s
-  fields_under_root: true
-  fields:
-      foo: bar
-      tail_files: false
-  close_inactive: 2h
-  close_eof: false
-  close_removed: true
-  clean_removed: true
-  close_renamed: false`
-)
+//var (
+//	expectRenderResult = `
+//- type: log
+//  enabled: true
+//  paths:
+//      - /opt/tomcat/access.log
+//  scan_frequency: 10s
+//  fields_under_root: true
+//  fields:
+//      foo: bar
+//      tail_files: false
+//  close_inactive: 2h
+//  close_eof: false
+//  close_removed: true
+//  clean_removed: true
+//  close_renamed: false`
+//)
 
 func TestRender(t *testing.T) {
 	tmpl, err := template.ParseFiles("filebeat.tpl")

@@ -32,7 +32,9 @@ func (ac *AsyncCmd) Start() error {
 	}
 
 	go func(ac *AsyncCmd) {
-		ac.cmd.Wait()
+		if err := ac.cmd.Wait(); err != nil {
+			log.Errorf("CMD start failed: %s\n", err.Error())
+		}
 		close(ac.waitDone)
 		ac.finished = true
 	}(ac)

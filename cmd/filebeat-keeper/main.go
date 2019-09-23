@@ -98,11 +98,18 @@ func newFileChecker(path string, notify func()) func() {
 	}
 }
 
-func watchFileChange(path string, reloadCh chan<- struct{}) {
+func watchFileChange(path string, reloadCh chan<- struct{}) <-chan error {
 	checker := newFileChecker(path, func() { reloadCh <- struct{}{} })
 
+	errChan := make(chan error)
+
 	//watch CM
-	go watchConfigMapUpdate(filepath.Dir(path), checker)
+	go func() {
+		err := watchConfigMapUpdate(filepath.Dir(path), checker)
+		if err != nil {
+			errChan <- err
+		}
+	}()
 
 	//定时监测
 	go func(checkFile func()) {
@@ -111,6 +118,8 @@ func watchFileChange(path string, reloadCh chan<- struct{}) {
 			checkFile()
 		}
 	}(checker)
+
+	return errChan
 }
 
 func run(stopCh <-chan struct{}) error {
@@ -118,7 +127,7 @@ func run(stopCh <-chan struct{}) error {
 	started := false
 	cmd := newCmd()
 
-	watchFileChange(srcConfigPath, reloadCh)
+	fileWatchErr := watchFileChange(srcConfigPath, reloadCh)
 
 	if err := applyChange(); err == nil {
 		reloadCh <- struct{}{}
@@ -167,6 +176,9 @@ func run(stopCh <-chan struct{}) error {
 					os.Exit(1)
 				}
 			}
+		case err := <-fileWatchErr:
+			log.Fatalf("Filebeat watch ConfigMapUpdate failed: %s\n", err.Error())
+			os.Exit(1)
 		}
 	}
 }
@@ -196,7 +208,9 @@ func applyChange() error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 	if err := t.Execute(f, cfg); err != nil {
 		return fmt.Errorf("error rendor template: %v", err)
 	}

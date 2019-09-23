@@ -11,9 +11,9 @@ import (
 	"github.com/docker/docker/api/types"
 )
 
-type data struct {
-	ContainerInfos map[string]string
-}
+//type data struct {
+//	ContainerInfos map[string]string
+//}
 
 const (
 	labelPodName       = "io.kubernetes.pod.name"
@@ -226,13 +226,13 @@ func hostDirOf(path string, mounts map[string]types.MountPoint) string {
 	return ""
 }
 
-func getMountMap(containerJSON *types.ContainerJSON) map[string]types.MountPoint {
-	ret := map[string]types.MountPoint{}
-	for _, m := range containerJSON.Mounts {
-		ret[m.Destination] = m
-	}
-	return ret
-}
+//func getMountMap(containerJSON *types.ContainerJSON) map[string]types.MountPoint {
+//	ret := map[string]types.MountPoint{}
+//	for _, m := range containerJSON.Mounts {
+//		ret[m.Destination] = m
+//	}
+//	return ret
+//}
 
 // definitions of multiline_pattern, include_lines, exclude_lines can be found in
 // https://github.com/elastic/beats/blob/v6.4.2/filebeat/filebeat.reference.yml
