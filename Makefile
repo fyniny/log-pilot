@@ -95,10 +95,8 @@ test:
 	@go tool cover -func coverage.out | tail -n 1 | awk '{ print "Total coverage: " $$3 }'
 
 build-local:
-	@go build -i -v -o $(OUTPUT_DIR)/log-pilot -p $(CPUS)                               \
-	   $(CMD_DIR)/log-pilot
-	@go build -i -v -o $(OUTPUT_DIR)/filebeat -p $(CPUS)                                \
-	   $(CMD_DIR)/filebeat
+	  go build -i -v -o $(OUTPUT_DIR)/$${target} -p $(CPUS)                            \
+	  $(CMD_DIR)/$${target};                                                           \
 
 build-linux:
 	@docker run --rm                                                                   \
@@ -108,12 +106,10 @@ build-linux:
 	  -e GOARCH=amd64                                                                  \
 	  -e GOPATH=/go                                                                    \
 	  $(BASE_REGISTRY)/golang:1.12.9-stretch                                           \
-	    /bin/bash -c                                                                   \
-	      'go build -i -v -o $(OUTPUT_DIR)/log-pilot -p $(CPUS)                         \
-	        $(CMD_DIR)/log-pilot &&                                                    \
-	       go build -i -v -o $(OUTPUT_DIR)/filebeat -p $(CPUS)                          \
-	        $(CMD_DIR)/filebeat                                                          \
-	      '
+	    /bin/bash -c 'for target in $(TARGETS); do                                     \
+	       go build -i -v -o $(OUTPUT_DIR)/$${target} -p $(CPUS)                       \
+	         $(CMD_DIR)/$${target};                                                        \
+	     done'
 
 container: build-linux
 	@docker build -t $(REGISTRY)/log-pilot:$(VERSION) -f $(BUILD_DIR)/log-pilot/Dockerfile .
